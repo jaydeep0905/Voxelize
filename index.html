@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOXELIZE — Creative Studio</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Full-screen website */
+    .website {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background: #111;
+    }
+
+    /* Image pages */
+    .page {
+      position: absolute;
+      inset: 0;
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .page.active {
+      display: block;
+      animation: reveal 0.35s ease;
+    }
+
+    .page img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0.65;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Navigation overlay */
+    .navigation {
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 28px 4%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: white;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.38),
+        rgba(0, 0, 0, 0)
+      );
+    }
+
+    /* Studio logo */
+    .logo {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    /* Navigation links */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 30px;
+    }
+
+    .nav-link {
+      position: relative;
+      border: none;
+      padding: 7px 0;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.75);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.25s ease;
+    }
+
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: white;
+      transition: width 0.25s ease;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: white;
+    }
+
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-link:focus-visible,
+    .logo:focus-visible {
+      outline: 1px solid white;
+      outline-offset: 5px;
+    }
+
+    /* Mobile layout */
+    @media (max-width: 650px) {
+      .navigation {
+        padding: 22px 5%;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .logo {
+        font-size: 19px;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+      }
+
+      .nav-link {
+        font-size: 9px;
+        letter-spacing: 1px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="website">
+
+    <!-- HOME: Replace this image with your home artwork -->
+    <section class="page active" id="home" aria-label="Home">
+      <img src="images/home.jpg" alt="Voxelize home artwork" />
+    </section>
+
+    <!-- ADVERT: One image only -->
+    <section class="page" id="advert" aria-label="Advert" inert>
+      <img src="images/advert.jpg" alt="Voxelize advertising artwork" />
+    </section>
+
+    <!-- PROJECTS: One image only -->
+    <section class="page" id="projects" aria-label="Projects" inert>
+      <img src="images/projects.jpg" alt="Voxelize project artwork" />
+    </section>
+
+    <!-- ABOUT US: One image only -->
+    <section class="page" id="about" aria-label="About Us" inert>
+      <img src="images/about.jpg" alt="About Voxelize" />
+    </section>
+
+    <!-- CONTACT: One image only -->
+    <section class="page" id="contact" aria-label="Contact" inert>
+      <img src="images/contact.jpg" alt="Voxelize contact artwork" />
+    </section>
+
+    <!-- Fixed navigation -->
+    <header class="navigation">
+      <a href="#home" class="logo" data-page="home">VOXELIZE</a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <button class="nav-link" data-page="advert">Advert</button>
+        <button class="nav-link" data-page="projects">Projects</button>
+        <button class="nav-link" data-page="about">About Us</button>
+        <button class="nav-link" data-page="contact">Contact</button>
+      </nav>
+    </header>
+
+  </main>
+
+  <script>
+    const pages = document.querySelectorAll(".page");
+    const navItems = document.querySelectorAll("[data-page]");
+
+    function showPage(pageId) {
+      const target = document.getElementById(pageId);
+
+      if (!target) return;
+
+      pages.forEach((page) => {
+        const isActive = page.id === pageId;
+
+        page.classList.toggle("active", isActive);
+        page.inert = !isActive;
+      });
+
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        const isActive = link.dataset.page === pageId;
+
+        link.classList.toggle("active", isActive);
+
+        if (isActive) {
+          link.setAttribute("aria-current", "page");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+
+      if (window.location.hash !== "#" + pageId) {
+        history.replaceState(null, "", "#" + pageId);
+      }
+    }
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", (event) => {
+        event.preventDefault();
+        showPage(item.dataset.page);
+      });
+    });
+
+    // Open the selected tab if the URL contains a valid page hash.
+    const initialPage = window.location.hash.replace("#", "");
+    const validPage = document.getElementById(initialPage);
+
+    if (validPage && validPage.classList.contains("page")) {
+      showPage(initialPage);
+    } else {
+      showPage("home");
+    }
+  </script>
+</body>
+</html>
