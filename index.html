@@ -211,7 +211,7 @@
 
     <!-- Fixed navigation -->
     <header class="navigation">
-      <a href="#home" class="logo" data-page="home">VOXELIZE</a>
+      <a href="/" class="logo">VOXELIZE</a>
 
       <nav class="nav-links" aria-label="Main navigation">
         <button class="nav-link" data-page="advert">Advert</button>
@@ -251,8 +251,9 @@
         }
       });
 
-      if (window.location.hash !== "#" + pageId) {
-        history.replaceState(null, "", "#" + pageId);
+      if (window.location.pathname !== (pageId === "home" ? "/" : "/" + pageId)) {
+        const newPath = pageId === "home" ? "/" : "/" + pageId;
+        history.replaceState(null, "", newPath);
       }
     }
 
@@ -263,10 +264,14 @@
       });
     });
 
-    // Open the selected tab if the URL contains a valid page hash.
-    const initialPage = window.location.hash.replace("#", "");
+    // Open the selected page based on URL pathname.
+    let path = window.location.pathname;
+    // Remove leading slash
+    let initialPage = path.startsWith("/") ? path.slice(1) : path;
+    if (initialPage === "") {
+      initialPage = "home";
+    }
     const validPage = document.getElementById(initialPage);
-
     if (validPage && validPage.classList.contains("page")) {
       showPage(initialPage);
     } else {
