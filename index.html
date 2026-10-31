@@ -116,6 +116,8 @@
       cursor: pointer;
       white-space: nowrap;
       transition: color 0.25s ease;
+      text-decoration: none;
+      display: inline-block;
     }
 
     .nav-link::after {
@@ -189,11 +191,6 @@
       <img src="images/home.jpg" alt="Voxelize home artwork" />
     </section>
 
-    <!-- ADVERT: One image only -->
-    <section class="page" id="advert" aria-label="Advert" inert>
-      <img src="images/advert.jpg" alt="Voxelize advertising artwork" />
-    </section>
-
     <!-- PROJECTS: One image only -->
     <section class="page" id="projects" aria-label="Projects" inert>
       <img src="images/projects.jpg" alt="Voxelize project artwork" />
@@ -214,7 +211,7 @@
       <a href="/" class="logo">VOXELIZE</a>
 
       <nav class="nav-links" aria-label="Main navigation">
-        <button class="nav-link" data-page="advert">Advert</button>
+        <a href="/advert/" class="nav-link">Advert</a>
         <button class="nav-link" data-page="projects">Projects</button>
         <button class="nav-link" data-page="about">About Us</button>
         <button class="nav-link" data-page="contact">Contact</button>
@@ -225,7 +222,7 @@
 
   <script>
     const pages = document.querySelectorAll(".page");
-    const navItems = document.querySelectorAll("[data-page]");
+    const navItems = document.querySelectorAll("button[data-page]");
 
     function showPage(pageId) {
       const target = document.getElementById(pageId);
@@ -251,9 +248,14 @@
         }
       });
 
-      if (window.location.pathname !== (pageId === "home" ? "/" : "/" + pageId)) {
-        const newPath = pageId === "home" ? "/" : "/" + pageId;
-        history.replaceState(null, "", newPath);
+      if (pageId === "home") {
+        if (window.location.hash) {
+          history.replaceState(null, "", window.location.pathname);
+        }
+      } else {
+        if (window.location.hash !== "#" + pageId) {
+          history.replaceState(null, "", "#" + pageId);
+        }
       }
     }
 
@@ -264,19 +266,42 @@
       });
     });
 
-    // Open the selected page based on URL pathname.
-    let path = window.location.pathname;
-    // Remove leading slash
-    let initialPage = path.startsWith("/") ? path.slice(1) : path;
-    if (initialPage === "") {
-      initialPage = "home";
+    document.querySelector(".logo")?.addEventListener("click", (event) => {
+      if (window.location.pathname === "/" || window.location.pathname.endsWith("index.html") || window.location.pathname === "") {
+        event.preventDefault();
+        showPage("home");
+      }
+    });
+
+    // Open the selected page based on hash or URL pathname
+    function getInitialPage() {
+      if (window.location.hash) {
+        return window.location.hash.replace("#", "");
+      }
+      let path = window.location.pathname;
+      let initialPage = path.startsWith("/") ? path.slice(1) : path;
+      if (initialPage.endsWith("/")) {
+        initialPage = initialPage.slice(0, -1);
+      }
+      return initialPage || "home";
     }
-    const validPage = document.getElementById(initialPage);
-    if (validPage && validPage.classList.contains("page")) {
-      showPage(initialPage);
+
+    const initialPage = getInitialPage();
+    if (initialPage === "advert") {
+      window.location.replace("/advert/");
     } else {
-      showPage("home");
+      const validPage = document.getElementById(initialPage);
+      if (validPage && validPage.classList.contains("page")) {
+        showPage(initialPage);
+      } else {
+        showPage("home");
+      }
     }
+
+    window.addEventListener("hashchange", () => {
+      const pageId = window.location.hash ? window.location.hash.replace("#", "") : "home";
+      showPage(pageId);
+    });
   </script>
 </body>
 </html>
